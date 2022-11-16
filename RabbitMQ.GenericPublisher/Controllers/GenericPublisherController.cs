@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.GenericPublisher.Models;
 using RabbitMQ.Main;
 using System.Text.Json.Nodes;
@@ -19,23 +20,20 @@ namespace RabbitMQ.GenericPublisher.Controllers
         {
             _logger = logger;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="genericJson"></param>
-        /// <param name="topic"></param>
-        /// <param name="queue"></param>
-        /// <returns></returns>
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <param name="genericJson"></param>
+       /// <param name="topic"></param>
+       /// <param name="queue"></param>
+       /// <returns></returns>
         [HttpPost(Name = "PublishGeneric")]
-        public async Task<IActionResult> PublishGeneric([FromBody] object genericJson, string topic, string queue)
+      
+        public async Task<IActionResult> PublishGeneric([FromBody] JsonObject genericJson, string topic= "correlation.topic", string queue= "Message.*.Assets")
         {
 
-            _logger.LogTrace("Recieved:" + JsonConvert.SerializeObject(genericJson) + " at " + DateTime.UtcNow);
-            //for testing purposes
-
-
-            Helper.DropMessages(genericJson, topic, queue);
+            _logger.LogTrace("Recieved:" + genericJson + " at " + DateTime.UtcNow);
+             Helper.DropMessages(genericJson, topic, queue);
             _logger.LogTrace("Finished at " + DateTime.UtcNow);
             return Ok("done and gone");
         }

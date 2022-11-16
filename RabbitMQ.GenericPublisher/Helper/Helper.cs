@@ -5,6 +5,7 @@ using System;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Nodes;
 
 namespace RabbitMQ.Main;
 public class Helper
@@ -81,7 +82,7 @@ public class Helper
     }
 
 
-    public static bool DropMessages<T>(T messages,string topic,string queue)
+     public static bool DropMessages(JsonObject messages,string topic,string queue)
     {
         ConnectionFactory factory = CreateRabbitMqConnection();
 
@@ -92,7 +93,7 @@ public class Helper
                  
                     using (IModel channel = conn.CreateModel())
                     {
-                        var message = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messages));
+                    var message = Encoding.UTF8.GetBytes(messages.ToString()); ;
                         channel.BasicPublish(
                                                 exchange: topic,
                                                 routingKey: queue,
